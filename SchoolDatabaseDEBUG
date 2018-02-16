@@ -1,0 +1,300 @@
+import argparse
+
+
+# ---------------------------------------------------------------------
+# Site Class
+# ---------------------------------------------------------------------
+
+# The Site class' init function is given to you so the menu will run
+# without modification, you will need to modify it for this assignment
+
+# Teacher Class
+class Teacher:
+    def __init__(self, teachername):
+        self.teachername = teachername
+
+    def __str__(self):
+        # self.teachername = str(self.teachername)
+        return self.teachername
+
+
+class Student:
+    def __init__(self, student_name, studentID):
+        self.student_name = student_name
+        self.studentID = studentID
+        self.student_grades = {}
+
+    def __str__(self):
+        self.student_name = str(self.student_name) + str(self.studentID)
+
+    def print_name(self):
+        return self.student_name
+
+
+class Course:
+    def __init__(self, course_name):
+        self.course_name = course_name
+        self.students_assigned = []
+        self.student_grades = {}
+        self.teacher_assigned = 'No Teacher'
+
+    def assign_teacher(self, teacher):
+        self.teacher_assigned = str(input('Assign a teacher to the course : '))
+
+    def __str__(self):
+        return self.students_assigned
+
+
+class Site:
+    def __init__(self, school):
+        teachername = None
+        self.school_name = school
+        self.teacherlist = [Teacher('Walker')]
+        self.studentlist = [Student('Aeris', 1), Student('Elhaym', 2)]
+        self.courselist = [Course('Math'), Course('Science')]
+        self.teachername = teachername
+
+    def print_teacherlist(self):
+        for teacher in school.teacherlist:
+            print(teacher.teachername)
+
+    def print_studentlist(self):
+        for student in school.studentlist:
+            print(student.student_name + ' ' + str(student.studentID))
+
+    def print_courselist(self):
+        for course in school.courselist:
+            print(course.course_name)
+
+
+# ---------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------
+
+# argparse is a python library for taking command line arguments
+# here we require you to name the school when running the program
+
+parser = argparse.ArgumentParser(description='School Records System')
+parser.add_argument('school_name', type=str, help='name of the school')
+args = parser.parse_args()
+
+school = Site(args.school_name)
+
+user_input = None
+while user_input != '0':
+    exit_to_menu = False
+    print('Welcome to the ' + str(school.school_name) + ' database.')
+    print('Please select an option from the following menu : ')
+    print('(1)\tAdd Student')
+    print('(2)\tAdd Course')
+    print('(3)\tAdd Teacher')
+    print('(4)\tAssign Teacher to Course')
+    print('(5)\tAssign Student to Course')
+    print('(6)\tRemove Student from Course')
+    print('(7)\tAssign Grade to Student')
+    print('(8)\tPrint Course Info')
+    print('(9)\tPrint Student Info')
+    print('(0)\tExit')
+
+    # The 'pass' commands below are there to allow the program
+    # to run without modification, they can be removed as you
+    # complete each menu option
+    user_input = str(input('Selection: '))
+    if user_input == '1':
+        print('The following is a list of Students.')
+        while exit_to_menu != True:
+            school.print_studentlist()
+            print('Please add a new Student')
+            newstudent_name = str(input('Enter Student Name or 0 to go back to the menu : '))
+            if newstudent_name == '0':
+                exit_to_menu = True
+            else:
+                newstudentID = (len(school.studentlist) + 1)
+                student_input = Student(newstudent_name, newstudentID)
+                for student in school.studentlist:
+                    if student.student_name == student_input.student_name:
+                        print('Student: ' + student.student_name + ' is already in the Student List.')
+                        exit_to_menu = True
+                if exit_to_menu != True:
+                    school.studentlist.append(student_input)
+                print('The following is an updated list of Students.')
+                school.print_studentlist()
+                exit_to_menu = True
+    # Create a new student and add it to the school
+    elif user_input == '2':
+        print('The following is the list of available Courses')
+        while exit_to_menu != True:
+            school.print_courselist()
+            print('Please add new Course name')
+            course_input = str(input('Enter Course Name or 0 to go back to the menu : ').capitalize())
+            if course_input == '0':
+                exit_to_menu = True
+            else:
+                new_course = Course(course_input)
+                for course in school.courselist:
+                    if course.course_name == new_course.course_name:
+                        print('Course: ' + course.course_name + ' is already available.')
+                        exit_to_menu = True
+                if exit_to_menu != True:
+                    school.courselist.append(new_course)
+                    print('The following is an updated list of Courses.')
+                    school.print_courselist()
+                    exit_to_menu = True
+        # Create a new course and add it to the school
+        pass
+    elif user_input == '3':
+        print('The following is the list of Teachers.')
+        while exit_to_menu != True:
+            school.print_teacherlist()
+            newteacher_name = str(input('Enter Teacher Name or 0 to go back to the menu : '))
+            if newteacher_name == '0':
+                exit_to_menu = True
+            else:
+                name = Teacher(newteacher_name)
+                for teacher in school.teacherlist:
+                    if teacher.teachername == name.teachername:
+                        print('Teacher: ' + teacher.teachername + ' is already in the Teacher List.')
+                        exit_to_menu = True
+                if exit_to_menu != True:
+                    school.teacherlist.append(name)
+                    print('The following is the updated list of Teachers.')
+                    school.print_teacherlist()
+                    exit_to_menu = True
+
+    # Create a new teacher and add it to the school
+    elif user_input == '4':
+        while exit_to_menu != True:
+            school.print_courselist()
+            for course_selection in school.courselist:
+                print(
+                    '\nThe course ' + course_selection.course_name + ' currently has ' + course_selection.teacher_assigned + ' assigned. \n')
+            course_selection_input = str(
+                input('Please select a Course to assign the teacher or enter 0 to go back to the menu : \n'))
+            if course_selection_input == '0':
+                exit_to_menu = True
+            else:
+                while exit_to_menu != True:
+                    # course_chosen = Course(course_selection_input)
+                    for course in school.courselist:
+                        # if course.course_name == course_chosen.course_name:
+                        if course.course_name == course_selection_input:
+                            print('\nIn order to assign a teacher, please select a teacher from the available list. \n')
+                            school.print_teacherlist()
+                            teacher_selection_input = input(
+                                '\nPlease select a Teacher or enter 0 to cancel teacher assignment : \n')
+                            if teacher_selection_input == '0':
+                                exit_to_menu = True
+                            for teacher in school.teacherlist:
+                                if teacher.teachername == teacher_selection_input:
+                                    course.teacher_assigned = teacher_selection_input
+                                    print(
+                                        course.teacher_assigned + ' has now been assigned to teach ' + course.course_name + '. \n')
+                                    for course in school.courselist:
+                                        print(course.course_name + ' : ' + course.teacher_assigned)
+                                    exit_to_menu = True
+    # Print the available courses and teachers for
+    # selection, when a course and teacher are selected
+    # set that teacher as the instructor for that course
+    elif user_input == '5':
+        print('Please assign Student to Course')
+        while exit_to_menu != True:
+            school.print_courselist()
+            for course_selection in school.courselist:
+                print('\nThe course ' + course_selection.course_name + ' currently has the following students : ' + str(
+                    course_selection.students_assigned) + '\n')
+            course_selection_input = str(
+                input('Please select a Course to assign a student or enter 0 to go back to the menu : \n'))
+            if course_selection_input == '0':
+                exit_to_menu = True
+            else:
+                while exit_to_menu != True:
+
+                    for course in school.courselist:
+                        # if course.course_name == course_chosen.course_name:
+                        if course.course_name == course_selection_input:
+                            # course_chosen = school.courselist.index(Course(course_selection_input))
+                            # course_chosen = school.courselist[course_chosen]
+                            print('\nIn order to assign a student, please select a student from the available list. \n')
+                            school.print_studentlist()
+                            student_selection_id = (len(school.studentlist) + 1)
+                            student_selection_input = input(
+                                '\nPlease select a student or enter 0 to cancel student assignment : \n')
+                            student_selection_input = Student(student_selection_input, student_selection_id)
+                            if student_selection_input == '0':
+                                exit_to_menu = True
+                            for student in school.studentlist:
+                                if student.student_name == student_selection_input.student_name:
+                                    print('HI')
+                                    # somehwere around here.  It isn't creating a student object to reference.  and doing weird things with this stuff.
+                                    for student_course in course_chosen.students_assigned:
+                                        print('HELLO')
+                                        if student_course.student_name == student_selection_input:
+                                            print('Student is already assigned to the course.')
+                                else:
+                                    course.students_assigned.append(student.student_name)
+                                    print(str(
+                                        student.student_name) + ' has now been assigned to ' + course.course_name + '.\n')
+                            #
+                            # else:
+                            #	print('Student does not exist.')
+                            # FIX THE STUDENT NOT ACTUALLY ASSIGNING
+                            for course in school.courselist:
+                                print(course.course_name + ' : ' + str(course.students_assigned))
+                            exit_to_menu = True
+        # Print the available students and courses for
+        # selection, when a student adn course are selected
+        # add that student to that course
+        pass
+    elif user_input == '6':
+        print('Please remove Student from Course')
+        # Print the available courses, after selected print
+        # the students enrolled in that course. Once a
+        # student is selected, remove that student from
+        # that course
+        pass
+    elif user_input == '7':
+        print('Please assign Grade to Student')
+        # Print the available courses, after selected print
+        # the students enrolled in that course. Once a
+        # student is selected, ask for a new grade and
+        # update that students grade for that course
+        pass
+    elif user_input == '8':
+        print('Print Course Info')
+        while exit_to_menu != True:
+            school.print_courselist()
+            print_course_selection = input(
+                '\nPlease select a Course to Print Info or enter 0 to go back to the menu :  \n')
+            if print_course_selection == '0':
+                exit_to_menu = True
+            else:
+                while exit_to_menu != True:
+                    for course in school.courselist:
+                        if course.course_name == print_course_selection:
+                            print(str(course.course_name) + ' is the selected course.')
+                            print(str(course.course_name) + ' has the following assigned teacher : ' + str(
+                                course.teacher_assigned))
+                            print(str(course.course_name) + ' has the following students in the class roster : ' + str(
+                                course.students_assigned) + ' \n')
+                            #	for student in course.students_assigned:
+                            #							for student, grade in course.student_grades():
+                            #		print(student + ' : ' + grade)
+                            exit_to_menu = True
+                        else:
+                            break
+
+        # for key,val in released.items():
+        # print key, "=>", val
+
+        # Print the available courses, after selected print
+        # the selected course title and assigned teacher as
+        # well as a list of all students enrolled in the
+        # course and their grade
+        pass
+    elif user_input == '9':
+        print('Print Student Info')
+        # Print the available students, after selected print
+        # the selected students name and the courses that
+        # student is enrolled in
+        pass
+
